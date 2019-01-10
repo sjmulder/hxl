@@ -1,6 +1,6 @@
 hxl
 ===
-**hexl** [_filename_]
+**hxl** [_filename_]
 
 A simple hex viewer inspired by [hexyl](https://github.com/sharkdp/hexyl).
 I wanted to write a simple clone in C but got a bit carried away with
