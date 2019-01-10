@@ -121,7 +121,7 @@ main(int argc, char **argv)
 		cursor = line;
 	}
 
-	fputs("\33[0;m", stdout);
+	fputs("\33[0m", stdout);
 
 	if (ferror(file))
 		err(1, NULL);
