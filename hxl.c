@@ -29,7 +29,7 @@ static char *cursor;
 		cursor += sizeof(a)-1; \
 	} while (0)
 
-static inline int
+static int
 classify(uint8_t b)
 {
 	if (b == 0)	return C_NULL;
@@ -41,7 +41,7 @@ classify(uint8_t b)
 	return C_HIGH;
 }
 
-static inline void
+static void
 set_color(int class)
 {
 	if (class == lastclass)
@@ -58,7 +58,7 @@ set_color(int class)
 	class = lastclass;
 }
 
-static inline void
+static void
 print_hex(uint8_t b)
 {
 	set_color(classify(b));
@@ -70,7 +70,7 @@ print_hex(uint8_t b)
 	cursor += 3;
 }
 
-static inline void
+static void
 print_char(uint8_t b)
 {
 	int class = classify(b);
