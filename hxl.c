@@ -95,7 +95,7 @@ main(int argc, char **argv)
 {
 	FILE *file = stdin;
 	uint8_t buf[16];
-	size_t nread, i;
+	size_t nread, max_8, i;
 
 	if (argc > 2)
 		errx(1, "usage: hxl [file]");
@@ -106,23 +106,43 @@ main(int argc, char **argv)
 	pledge("stdio", NULL);
 #endif
 
-	while ((nread = fread(buf, 1, 16, file))) {
+	while ((nread = fread(buf, 1, 16, file)) == 16) {
 		cursor = line;
 
 		i = 0;
-		for (; i < 8 && i < nread; i++) print_hex(buf[i]);
-		for (; i < 8; i++) LINE_APPEND("   ");
+		while (i < 8)  print_hex(buf[i++]);
 		*cursor++ = ' ';
-		for (; i < 16 && i < nread; i++) print_hex(buf[i]);
-		for (; i < 16; i++) LINE_APPEND("   ");
+		while (i < 16) print_hex(buf[i++]);
 
 		*cursor++ = ' ';
 
 		i = 0;
-		for (; i < 8 && i < nread; i++) print_char(buf[i]);
+		while (i < 8)  print_char(buf[i++]);
+		*cursor++ = ' ';
+		while (i < 16) print_char(buf[i++]);
+
+		*cursor++ = '\n';
+		fwrite(line, cursor - line, 1, stdout);
+	}
+
+	if (nread) {
+		max_8 = nread > 8 ? 8 : nread;
+		cursor = line;
+
+		i = 0;
+		while (i < max_8) print_hex(buf[i++]);
+		while (i++ < 8)   LINE_APPEND("   ");
+		*cursor++ = ' ';
+		while (i < 16)    print_hex(buf[i++]);
+		while (i++ < 16)  LINE_APPEND("   ");
+
+		*cursor++ = ' ';
+
+		i = 0;
+		while (i < max_8) print_char(buf[i++]);
 		if (nread > 8) {
 			*cursor++ = ' ';
-			for (; i < 16 && i < nread; i++) print_char(buf[i]);
+			while (i < 16) print_char(buf[i++]);
 		}
 
 		*cursor++ = '\n';
