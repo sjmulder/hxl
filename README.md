@@ -12,7 +12,7 @@ machine with hxl 0.3.1:
     $ time hexyl largefile >/dev/null
     1m00.87s real     0m55.00s user     0m05.87s system
     $ time ./hxl largefile >/dev/null
-    0m19.71s real     0m19.37s user     0m00.34s system
+    0m09.44s real     0m09.15s user     0m00.28s system
 
 The other major differences from hexyl are that hxl does not draw boxes around
 its output, does not use non-ASCII glyphs, and uses only basic VT100
