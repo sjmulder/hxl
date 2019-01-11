@@ -51,6 +51,8 @@ set_color(int class)
 	if (class == lastclass)
 		return;
 
+	lastclass = class;
+
 	switch (class) {
 	case C_NULL:	LINE_APPEND(ESC_NULL); break;
 	case C_SPACE:	LINE_APPEND(ESC_SPACE); break;
@@ -59,7 +61,6 @@ set_color(int class)
 	case C_HIGH:	LINE_APPEND(ESC_HIGH); break;
 	}
 
-	class = lastclass;
 }
 
 static void
