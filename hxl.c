@@ -23,8 +23,6 @@ enum {
 #define ESC_CONTROL	"\33[0;35m"
 #define ESC_HIGH	"\33[0;33m"
 
-static int lastclass = -1;
-static char line[1024];
 static char *cursor;
 
 #define LINE_APPEND(a) \
@@ -48,6 +46,8 @@ classify(uint8_t b)
 static void
 set_color(int class)
 {
+	static int lastclass = -1;
+
 	if (class == lastclass)
 		return;
 
@@ -90,12 +90,59 @@ print_char(uint8_t b)
 	    '.';
 }
 
+static void
+process_line(uint8_t data[16])
+{
+	size_t i;
+
+	i = 0;
+	while (i < 8)  print_hex(data[i++]);
+	*cursor++ = ' ';
+	while (i < 16) print_hex(data[i++]);
+
+	*cursor++ = ' ';
+
+	i = 0;
+	while (i < 8)  print_char(data[i++]);
+	*cursor++ = ' ';
+	while (i < 16) print_char(data[i++]);
+
+	*cursor++ = '\n';
+}
+
+static void
+process_linepart(uint8_t data[16], size_t count)
+{
+	size_t i, max_8;
+
+	max_8 = count > 8 ? 8 : count;
+
+	i = 0;
+	while (i < max_8) print_hex(data[i++]);
+	while (i < 8)     {LINE_APPEND("   "); i++;}
+	*cursor++ = ' ';
+	while (i < count) print_hex(data[i++]);
+	while (i < 16)    {LINE_APPEND("   "); i++;}
+
+	*cursor++ = ' ';
+
+	i = 0;
+	while (i < max_8) print_char(data[i++]);
+	if (count > 8) {
+		*cursor++ = ' ';
+		while (i < count) print_char(data[i++]);
+	}
+
+	*cursor++ = '\n';
+}
+
 int
 main(int argc, char **argv)
 {
 	FILE *file = stdin;
 	uint8_t buf[16];
-	size_t nread, max_8, i;
+	size_t nread;
+	char line[1024];
 
 	if (argc > 2)
 		errx(1, "usage: hxl [file]");
@@ -108,44 +155,13 @@ main(int argc, char **argv)
 
 	while ((nread = fread(buf, 1, 16, file)) == 16) {
 		cursor = line;
-
-		i = 0;
-		while (i < 8)  print_hex(buf[i++]);
-		*cursor++ = ' ';
-		while (i < 16) print_hex(buf[i++]);
-
-		*cursor++ = ' ';
-
-		i = 0;
-		while (i < 8)  print_char(buf[i++]);
-		*cursor++ = ' ';
-		while (i < 16) print_char(buf[i++]);
-
-		*cursor++ = '\n';
+		process_line(buf);
 		fwrite(line, cursor - line, 1, stdout);
 	}
 
 	if (nread) {
-		max_8 = nread > 8 ? 8 : nread;
 		cursor = line;
-
-		i = 0;
-		while (i < max_8) print_hex(buf[i++]);
-		while (i < 8)     {LINE_APPEND("   "); i++;}
-		*cursor++ = ' ';
-		while (i < nread) print_hex(buf[i++]);
-		while (i < 16)    {LINE_APPEND("   "); i++;}
-
-		*cursor++ = ' ';
-
-		i = 0;
-		while (i < max_8) print_char(buf[i++]);
-		if (nread > 8) {
-			*cursor++ = ' ';
-			while (i < nread) print_char(buf[i++]);
-		}
-
-		*cursor++ = '\n';
+		process_linepart(buf, nread);
 		fwrite(line, cursor - line, 1, stdout);
 	}
 
