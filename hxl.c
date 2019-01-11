@@ -131,10 +131,10 @@ main(int argc, char **argv)
 
 		i = 0;
 		while (i < max_8) print_hex(buf[i++]);
-		while (i++ < 8)   LINE_APPEND("   ");
+		while (i < 8)     {LINE_APPEND("   "); i++;}
 		*cursor++ = ' ';
-		while (i < 16)    print_hex(buf[i++]);
-		while (i++ < 16)  LINE_APPEND("   ");
+		while (i < nread) print_hex(buf[i++]);
+		while (i < 16)    {LINE_APPEND("   "); i++;}
 
 		*cursor++ = ' ';
 
@@ -142,7 +142,7 @@ main(int argc, char **argv)
 		while (i < max_8) print_char(buf[i++]);
 		if (nread > 8) {
 			*cursor++ = ' ';
-			while (i < 16) print_char(buf[i++]);
+			while (i < nread) print_char(buf[i++]);
 		}
 
 		*cursor++ = '\n';
