@@ -5,6 +5,10 @@
 #include <string.h>
 #include <err.h>
 
+#ifdef __OpenBSD__
+#include <unistd.h>
+#endif
+
 enum {
 	C_NULL,
 	C_SPACE,
@@ -96,6 +100,10 @@ main(int argc, char **argv)
 		errx(1, "usage: print_hex [file]");
 	else if (argc == 2 && !(file = fopen(argv[1], "r")))
 		err(1, "%s", argv[1]);
+
+#ifdef __OpenBSD__
+	pledge("stdio", NULL);
+#endif
 
 	while ((nread = fread(buf, 1, 16, file))) {
 		cursor = line;
