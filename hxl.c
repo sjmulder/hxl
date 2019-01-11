@@ -97,9 +97,9 @@ main(int argc, char **argv)
 	else if (argc == 2 && !(file = fopen(argv[1], "r")))
 		err(1, "%s", argv[1]);
 
-	cursor = line;
-
 	while ((nread = fread(buf, 1, 16, file))) {
+		cursor = line;
+
 		i = 0;
 		for (; i < 8 && i < nread; i++) print_hex(buf[i]);
 		for (; i < 8; i++) LINE_APPEND("   ");
@@ -118,7 +118,6 @@ main(int argc, char **argv)
 
 		*cursor++ = '\n';
 		fwrite(line, cursor - line, 1, stdout);
-		cursor = line;
 	}
 
 	fputs("\33[0m", stdout);
