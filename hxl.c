@@ -97,7 +97,7 @@ main(int argc, char **argv)
 	size_t nread, i;
 
 	if (argc > 2)
-		errx(1, "usage: print_hex [file]");
+		errx(1, "usage: hxl [file]");
 	else if (argc == 2 && !(file = fopen(argv[1], "r")))
 		err(1, "%s", argv[1]);
 
