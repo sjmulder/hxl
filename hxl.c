@@ -9,19 +9,31 @@
 #include <unistd.h>
 #endif
 
-enum {
-	C_NULL,
-	C_SPACE,
-	C_PRINT,
-	C_CONTROL,
-	C_HIGH
-};
+/* character classes. coincidentally, values are colors. */
+#define CN 0x37 /* NULL    */
+#define CS 0x92 /* SPACE   */
+#define CP 0x96 /* PRINT   */
+#define CC 0x95 /* CONTROL */
+#define CH 0x93 /* HIGH    */
 
-#define ESC_NULL 	"\33[0;2;37m"
-#define ESC_SPACE	"\33[0;32m"
-#define ESC_PRINT	"\33[0;36m"
-#define ESC_CONTROL	"\33[0;35m"
-#define ESC_HIGH	"\33[0;33m"
+static const unsigned char table[] = {
+	CN, CC, CC, CC, CC, CC, CC, CC, CC, CC, CS, CS, CS, CS, CC, CC,
+	CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC,
+	CS, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP,
+	CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP,
+	CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP,
+	CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP,
+	CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP,
+	CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CC,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
+	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH
+};
 
 static char *cursor;
 
@@ -31,42 +43,27 @@ static char *cursor;
 		cursor += sizeof(a)-1; \
 	} while (0)
 
-static int
-classify(uint8_t b)
-{
-	if (b == 0)	return C_NULL;
-	if (b < 10)	return C_CONTROL;
-	if (b < 14 || b == ' ') return C_SPACE;
-	if (b < 32)	return C_CONTROL;
-	if (b < 127)	return C_PRINT;
-	if (b == 127)	return C_CONTROL;
-	return C_HIGH;
-}
-
 static void
 set_color(int class)
 {
-	static int lastclass = -1;
+	static int last_class = -1;
 
-	if (class == lastclass)
+	if (class == last_class)
 		return;
 
-	lastclass = class;
+	cursor[0] = '\33';
+	cursor[1] = '[';
+	cursor[2] = "0123456789abcdef"[class >> 4];
+	cursor[3] = "0123456789abcdef"[class & 15];
+	cursor[4] = 'm';
 
-	switch (class) {
-	case C_NULL:	LINE_APPEND(ESC_NULL); break;
-	case C_SPACE:	LINE_APPEND(ESC_SPACE); break;
-	case C_PRINT:	LINE_APPEND(ESC_PRINT); break;
-	case C_CONTROL:	LINE_APPEND(ESC_CONTROL); break;
-	case C_HIGH:	LINE_APPEND(ESC_HIGH); break;
-	}
-
+	cursor += 5;
 }
 
 static void
 print_hex(uint8_t b)
 {
-	set_color(classify(b));
+	set_color(table[b]);
 
 	cursor[0] = "0123456789abcdef"[b >> 4];
 	cursor[1] = "0123456789abcdef"[b & 15];
@@ -78,15 +75,15 @@ print_hex(uint8_t b)
 static void
 print_char(uint8_t b)
 {
-	int class = classify(b);
+	int class = table[b];
 
 	set_color(class);
 
 	*cursor++ =
 	    b == ' ' ? ' ' :
-	    class == C_NULL ? '0' :
-	    class == C_SPACE ? '_' :
-	    class == C_PRINT ? b :
+	    class == CN ? '0' :
+	    class == CS ? '_' :
+	    class == CP ? b :
 	    '.';
 }
 
