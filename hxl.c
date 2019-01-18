@@ -16,6 +16,8 @@
 #define CC 0x95 /* CONTROL */
 #define CH 0x93 /* HIGH    */
 
+static const char hex[] = "0123456789abcdef";
+
 static const unsigned char table[] = {
 	CN, CC, CC, CC, CC, CC, CC, CC, CC, CC, CS, CS, CS, CS, CC, CC,
 	CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC,
@@ -53,8 +55,8 @@ set_color(int class)
 
 	cursor[0] = '\33';
 	cursor[1] = '[';
-	cursor[2] = "0123456789abcdef"[class >> 4];
-	cursor[3] = "0123456789abcdef"[class & 15];
+	cursor[2] = hex[class >> 4];
+	cursor[3] = hex[class & 15];
 	cursor[4] = 'm';
 
 	cursor += 5;
@@ -65,8 +67,8 @@ print_hex(uint8_t b)
 {
 	set_color(table[b]);
 
-	cursor[0] = "0123456789abcdef"[b >> 4];
-	cursor[1] = "0123456789abcdef"[b & 15];
+	cursor[0] = hex[b >> 4];
+	cursor[1] = hex[b & 15];
 	cursor[2] = ' ';
 
 	cursor += 3;
