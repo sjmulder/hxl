@@ -63,6 +63,20 @@ set_color(int class)
 }
 
 static void
+print_offset(size_t off)
+{
+	int shift;
+
+	LINE_APPEND("\33[0m");
+
+	for (shift = 28; shift >= 0; shift -= 4)
+		*cursor++ = hex[(off >> shift) & 15];
+
+	*cursor++ = ' ';
+	*cursor++ = ' ';
+}
+
+static void
 print_hex(uint8_t b)
 {
 	set_color(table[b]);
@@ -140,7 +154,7 @@ main(int argc, char **argv)
 {
 	FILE *file = stdin;
 	uint8_t buf[16];
-	size_t nread;
+	size_t offset = 0, nread;
 	char line[1024];
 
 	if (argc > 2)
@@ -154,12 +168,15 @@ main(int argc, char **argv)
 
 	while ((nread = fread(buf, 1, 16, file)) == 16) {
 		cursor = line;
+		print_offset(offset);
 		process_line(buf);
 		fwrite(line, cursor - line, 1, stdout);
+		offset += 16;
 	}
 
 	if (nread) {
 		cursor = line;
+		print_offset(offset);
 		process_linepart(buf, nread);
 		fwrite(line, cursor - line, 1, stdout);
 	}
