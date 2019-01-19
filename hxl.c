@@ -18,7 +18,7 @@
 
 static const char hex[] = "0123456789abcdef";
 
-static const unsigned char table[] = {
+static const unsigned char class_table[] = {
 	CN, CC, CC, CC, CC, CC, CC, CC, CC, CC, CS, CS, CS, CS, CC, CC,
 	CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC, CC,
 	CS, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP, CP,
@@ -36,6 +36,16 @@ static const unsigned char table[] = {
 	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH,
 	CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH, CH
 };
+
+static const char char_table[] =
+	"0.........____.................."
+	" !\"#$%&'()*+,-./0123456789:l<=>?"
+	"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
+	"`abcdefghijklmnopqrstuvwxyz{|}~."
+	"................................"
+	"................................"
+	"................................"
+	"................................";
 
 static char *cursor;
 
@@ -79,7 +89,7 @@ print_offset(size_t off)
 static void
 print_hex(uint8_t b)
 {
-	set_color(table[b]);
+	set_color(class_table[b]);
 
 	cursor[0] = hex[b >> 4];
 	cursor[1] = hex[b & 15];
@@ -91,16 +101,10 @@ print_hex(uint8_t b)
 static void
 print_char(uint8_t b)
 {
-	int class = table[b];
+	int class = class_table[b];
 
 	set_color(class);
-
-	*cursor++ =
-	    b == ' ' ? ' ' :
-	    class == CN ? '0' :
-	    class == CS ? '_' :
-	    class == CP ? b :
-	    '.';
+	*cursor++ = char_table[b];
 }
 
 static void
