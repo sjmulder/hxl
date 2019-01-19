@@ -1,0 +1,30 @@
+.Dd Jan 19, 2019
+.Dt NOSTT 1
+.Os
+.Sh NAME
+.Nm hxl
+.Nd hex printer with color
+.Sh SYNOPSIS
+.Nm
+.Op Ar file
+.Sh DESCRIPTION
+Displays a colored hex view of
+.Ar file
+or standard input.
+.Sh SEE ALSO
+.Xr hexdump 1
+.Sh HISTORY
+Inspired by David Peter's
+.Em hexyl .
+.Sh AUTHORS
+.An Sijmen J. Mulder
+.Aq Mt ik@sjmulder.nl .
+.Sh BUGS
+Only ANSI-compatbile terminals are supported.
+.Pp
+Color output cannot be disabled.
+For
+.Xr less 1 ,
+use the
+.Fl R
+option.
