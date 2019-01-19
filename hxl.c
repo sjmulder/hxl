@@ -49,12 +49,6 @@ static const char char_table[] =
 
 static char *cursor;
 
-#define LINE_APPEND(a) \
-	do { \
-		memcpy(cursor, a, sizeof(a)-1); \
-		cursor += sizeof(a)-1; \
-	} while (0)
-
 static void
 set_color(int class)
 {
@@ -77,7 +71,11 @@ print_offset(size_t off)
 {
 	int shift;
 
-	LINE_APPEND("\33[0m");
+	cursor[0] = '\33';
+	cursor[1] = '[';
+	cursor[2] = '0';
+	cursor[3] = 'm';
+	cursor += 4;
 
 	for (shift = 28; shift >= 0; shift -= 4)
 		*cursor++ = hex[(off >> shift) & 15];
@@ -136,10 +134,22 @@ process_linepart(uint8_t data[16], size_t count)
 
 	i = 0;
 	while (i < max_8) print_hex(data[i++]);
-	while (i < 8)     {LINE_APPEND("   "); i++;}
+	while (i < 8) {
+		cursor[0] = ' ';
+		cursor[1] = ' ';
+		cursor[2] = ' ';
+		cursor += 3;
+		i++;
+	}
 	*cursor++ = ' ';
 	while (i < count) print_hex(data[i++]);
-	while (i < 16)    {LINE_APPEND("   "); i++;}
+	while (i < 16) {
+		cursor[0] = ' ';
+		cursor[1] = ' ';
+		cursor[2] = ' ';
+		cursor += 3;
+		i++;
+	}
 
 	*cursor++ = ' ';
 
