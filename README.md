@@ -18,12 +18,13 @@ The other major differences from hexyl are that hxl does not draw boxes around
 its output, does not use non-ASCII glyphs, and uses only basic VT100
 sequences. This to enhance compatibility and composability.
 
-Installation
-------------
+Running
+-------
 Should work on most Unix systems, including Linux, BSD, and macOS.
 
     make
-    sudo install hxl /usr/local/bin
+    make install   [DESTDIR=] [PREFIX=/usr/local] [MANPREFIX=PREFIX/man]
+    make uninstall [DESTDIR=] [PREFIX=/usr/local] [MANPREFIX=PREFIX/man]
 
 Author
 ------
