@@ -175,6 +175,10 @@ main(int argc, char **argv)
 		errx(1, "usage: hxl [file]");
 	else if (argc == 2 && !(file = fopen(argv[1], "r")))
 		err(1, "%s", argv[1]);
+	else if (argc < 2 && fseek(file, 0, SEEK_END) && ftell(file) < 1)
+		errx(1, "error: empty input stream");
+	else
+		rewind(file);
 
 #ifdef __OpenBSD__
 	pledge("stdio", NULL);
