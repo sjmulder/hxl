@@ -1,5 +1,7 @@
 hxl
 ===
+[![Build Status](https://dev.azure.com/sjmulder/hxl/_apis/build/status/hxl?branchName=master)](https://dev.azure.com/sjmulder/hxl/_build/latest?definitionId=7&branchName=master)
+
 **hxl** [_filename_]
 
 Simple hex viewer inspired by [hexyl](https://github.com/sharkdp/hexyl).
