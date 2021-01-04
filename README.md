@@ -14,6 +14,9 @@ stretch machine with hxl 0.3.1:
     $ time ./hxl largefile >/dev/null
     0m09.44s real     0m09.15s user     0m00.28s system
 
+(Note: these measurements predate switching from -O2 to -O3 which
+ improved performance by about 35%.)
+
 The other major differences from hexyl are that hxl does not draw boxes
 around its output, does not use non-ASCII glyphs, and uses only basic
 VT100 sequences. This to enhance compatibility and composability.

@@ -5,7 +5,7 @@ MANPREFIX ?= $(PREFIX)/man
 DOCKER ?= sudo docker
 
 CFLAGS += -Wall -Wextra
-CFLAGS += -O2
+CFLAGS += -O3
 
 all: hxl
 
