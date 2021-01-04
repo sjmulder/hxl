@@ -1,0 +1,42 @@
+jobs:
+
+- job: linux
+  displayName: Linux
+  pool:
+    vmImage: ubuntu-20.04
+  steps:
+  - script: ci/az-make.sh all hxl.static
+    displayName: Build
+  - task: Docker@2
+    displayName: Docker
+    inputs:
+      command: build
+      addPipelineData: false
+  - task: CopyFiles@2
+    displayName: Copy
+    inputs:
+      contents: |
+        hxl
+        hxl.static
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    displayName: Publish
+    inputs:
+      artifactName: hxl-ubuntu20.04
+
+- job: macos
+  displayName: macOS
+  pool:
+    vmImage: macos-10.15
+  steps:
+  - script: ci/az-make.sh
+    displayName: Build
+  - task: CopyFiles@2
+    displayName: Copy
+    inputs:
+      contents: hxl
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    displayName: Publish
+    inputs:
+      artifactName: hxl-macos10.15
