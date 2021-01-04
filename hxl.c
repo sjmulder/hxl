@@ -52,11 +52,6 @@ static char *cursor;
 static void
 set_color(int class)
 {
-	static int last_class = -1;
-
-	if (class == last_class)
-		return;
-
 	cursor[0] = '\33';
 	cursor[1] = '[';
 	cursor[2] = hex[class >> 4];
